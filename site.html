@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MemoFit - App de Suporte Cognitivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary: #196c92;
+  --accent: #39d2c0;
+  --bg: linear-gradient(to bottom right,#D9FBE6,#39D2C0);
+  --text: #1a1a1a;
+  --white: #fff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 2rem;
+  z-index: 1000;
+  transition: 0.3s;
+}
+
+nav.scrolled {
+  background: var(--bg);
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+nav a:hover {
+  background: var(--accent);
+  color: var(--white);
+}
+
+.logo-fixed {
+  position: fixed;
+  top: 50px;
+  right: 20px;
+  z-index: 1100;
+  opacity: 0;
+  width: 350px;
+  height: auto;
+  transition: top 0.5s ease, opacity 0.5s ease, width 0.5s ease;
+}
+
+.logo-fixed.visible {
+  top: 10px;
+  opacity: 1;
+  width: 100px;
+}
+
+.logo-fixed img {
+  width: 100%;
+  height: auto;
+}
+
+section {
+  display: none;
+  min-height: 100vh;
+  padding: 120px 2rem 2rem;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+section.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  opacity: 1;
+  padding: 60px 2rem 2rem;
+}
+
+.logo-central {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 160px);
+}
+
+.logo-central img {
+  max-width: 350px;
+  width: 100%;
+}
+
+#sobre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+
+#sobre .sobre-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  max-width: 1200px;
+  width: 100%;
+}
+
+#sobre .sobre-img,
+#sobre .sobre-text {
+  flex: 1 1 300px;
+  min-width: 280px;
+  animation: fadeInUp 1s ease forwards;
+}
+
+#sobre .sobre-img img {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+}
+
+#sobre .sobre-text {
+  background: rgba(255,255,255,0.5);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+#sobre .sobre-text p {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+#sobre .sobre-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  max-width: 1000px;
+  width: 100%;
+}
+
+#sobre .sobre-card {
+  background: rgba(255,255,255,0.5);
+  border-radius: 15px;
+  padding: 1.5rem;
+  width: 220px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+#sobre .sobre-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+#sobre .sobre-card .icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+#sobre .sobre-card h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: var(--primary);
+}
+
+#sobre .sobre-card p {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.4;
+}
+
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@media(max-width:900px){
+  #sobre .sobre-content{flex-direction:column;}
+  #sobre .sobre-img img{max-width:300px;}
+}
+
+@media(max-width:600px){
+  #sobre .sobre-cards{flex-direction:column;align-items:center;}
+  #sobre .sobre-card{width:90%;}
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  animation: fadeInUp 1s ease forwards;
+}
+
+.card-group { width: 100%; }
+.card-group h3 {
+  color: var(--primary);
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.card {
+  background: rgba(255,255,255,0.5);
+  border-radius: 15px;
+  padding: 2rem 1.5rem;
+  width: 220px;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: default;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.card .icon { font-size: 3rem; margin-bottom: 1rem; }
+.card h4 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.8rem; color: var(--primary);}
+.card p { font-size: 0.95rem; line-height: 1.4; color: #333; }
+
+.carousel {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  margin: 2rem auto 0;
+  overflow: hidden;
+  border-radius: 15px;
+  background: none;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(25,108,146,0.7);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  padding: .5rem 1rem;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+  transition: background 0.3s ease;
+}
+
+.carousel-btn:hover { background: var(--accent); }
+.carousel-btn.prev { left: 10px; }
+.carousel-btn.next { right: 10px; }
+
+@media(max-width:600px){
+  .cards{flex-direction:column;align-items:center;}
+  .card{width:90%;}
+}
+
+#contato {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+#contato .contato-card {
+  background: rgba(255,255,255,0.5);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#contato .contato-card h2 {
+  color: var(--primary);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+#contato .contato-card p { font-size: 1.1rem; color: #333; }
+#contato .contato-card a { color: var(--primary); text-decoration: none; font-weight: 600; transition: 0.3s; }
+#contato .contato-card a:hover { color: var(--accent); }
+
+</style>
+</head>
+<body>
+
+<div class="logo-fixed" id="logoFixed">
+  <img src="memofit.png" alt="Logo MemoFit">
+</div>
+
+<nav id="navbar">
+  <ul>
+    <li><a href="#inicio" data-section="inicio">Início</a></li>
+    <li><a href="#sobre" data-section="sobre">Sobre</a></li>
+    <li><a href="#funcionalidades" data-section="funcionalidades">Funcionalidades</a></li>
+    <li><a href="#contato" data-section="contato">Contato</a></li>
+  </ul>
+</nav>
+
+<section id="inicio" class="active">
+  <div class="logo-central">
+    <img src="memofit.png" alt="Logo Central MemoFit">
+  </div>
+</section>
+
+<section id="sobre">
+<div class="sobre-content">
+  <div class="sobre-img"><img src="elevare.png" alt="Imagem ilustrativa MemoFit"></div>
+  <div class="sobre-text">
+    <p>O MemoFit é um aplicativo criado para oferecer suporte a pessoas com Doença de Alzheimer e aos seus cuidadores. Combina jogos cognitivos com ferramentas de organização da rotina, como lembretes e planejamento diário.</p>
+    <p>Nosso objetivo é promover autonomia, qualidade de vida e bem-estar, preservando habilidades mentais e facilitando o dia a dia.</p>
+    <p>O app incentiva a interação familiar, permitindo que cuidadores acompanhem o progresso do usuário e personalizem atividades de acordo com necessidades individuais.</p>
+    <p>Além disso, oferece relatórios simples e gráficos de desempenho para que cuidadores identifiquem áreas que precisam de atenção, garantindo acompanhamento eficiente e seguro.</p>
+    <p>Tudo isso de forma lúdica, motivadora e envolvente, promovendo autoestima e bem-estar emocional.</p>
+  </div>
+</div>
+<div class="sobre-cards">
+  <div class="sobre-card"><div class="icon">🖥️</div><h4>Interface Intuitiva</h4><p>Design claro e simples, facilitando o uso por pessoas de todas as idades.</p></div>
+  <div class="sobre-card"><div class="icon">🧠</div><h4>Estímulo Cognitivo</h4><p>Atividades pensadas para exercitar memória, atenção e raciocínio de forma divertida.</p></div>
+  <div class="sobre-card"><div class="icon">📊</div><h4>Acompanhamento Fácil</h4><p>Ferramentas para cuidadores monitorarem atividades e progresso do usuário de forma prática.</p></div>
+</div>
+</section>
+
+<section id="funcionalidades">
+<div class="cards-container">
+  <div class="card-group">
+    <h3>🧠 Jogos Cognitivos</h3>
+    <div class="cards">
+      <div class="card"><div class="icon">🧩</div><h4>Jogo da Memória</h4><p>Estimula atenção, raciocínio visual e memória de forma divertida.</p></div>
+      <div class="card"><div class="icon">🔤</div><h4>Caça-Palavras</h4><p>Trabalha concentração, reconhecimento de palavras e atenção a detalhes.</p></div>
+      <div class="card"><div class="icon">📊</div><h4>Sudoku</h4><p>Promove raciocínio lógico, análise de padrões e planejamento mental.</p></div>
+      <div class="card"><div class="icon">❌⭕</div><h4>Jogo da Velha</h4><p>Favorece pensamento estratégico e tomada de decisões rápidas.</p></div>
+    </div>
+  </div>
+  <div class="card-group">
+    <h3>⏰ Organização e Rotina</h3>
+    <div class="cards">
+      <div class="card"><div class="icon">📌</div><h4>Lembretes</h4><p>Ajuda a manter pontualidade em compromissos e tarefas importantes.</p></div>
+      <div class="card"><div class="icon">🗓️</div><h4>Planejamento Diário</h4><p>Organiza o dia de forma clara, permitindo acompanhamento fácil e tranquilo.</p></div>
+    </div>
+  </div>
+  <div class="card-group">
+    <h3>📱 Interfaces do App</h3>
+    <div class="carousel">
+      <button class="carousel-btn prev">&#10094;</button>
+      <div class="carousel-track">
+        <img src="escolha perfil.png" alt="Interface 1 do app" class="carousel-slide">
+        <img src="cadastro usuario.png" alt="Interface 2 do app" class="carousel-slide">
+        <img src="login usuario.png" alt="Interface 3 do app" class="carousel-slide">
+        <img src="codigo usuario.png" alt="Interface 1 do app" class="carousel-slide">
+        <img src="cadastro responsavel.png" alt="Interface 2 do app" class="carousel-slide">
+        <img src="login responsavel.png" alt="Interface 3 do app" class="carousel-slide">
+        <img src="tela home.png" alt="Interface 1 do app" class="carousel-slide">
+        <img src="jogos.png" alt="Interface 2 do app" class="carousel-slide">
+        <img src="lembretes.png" alt="Interface 3 do app" class="carousel-slide">
+        <img src="novo lembrete.png" alt="Interface 1 do app" class="carousel-slide">
+        <img src="planejamento.png" alt="Interface 2 do app" class="carousel-slide">
+        <img src="tarefas concluidas.png" alt="Interface 3 do app" class="carousel-slide">
+      </div>
+      <button class="carousel-btn next">&#10095;</button>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="contato">
+<div class="contato-card">
+  <h2>Fale Conosco</h2>
+  <p>Tem alguma dúvida ou deseja saber mais sobre o MemoFit?</p>
+  <p>Email: <a href="equipe.elevare2@gmail.com">equipe.elevare2@gmail.com</a></p>
+</div>
+</section>
+
+<script>
+const menuLinks=document.querySelectorAll('nav a'),
+      sections=document.querySelectorAll('section'),
+      logoFixed=document.getElementById('logoFixed'),
+      navbar=document.getElementById('navbar');
+let currentSection='inicio';
+
+function showSection(target){
+  sections.forEach(s=>{
+    s.id===target?(s.classList.add('active'),s.style.display='flex'):(s.classList.remove('active'),s.style.display='none');
+  });
+  target==='inicio'?logoFixed.classList.remove('visible'):logoFixed.classList.add('visible');
+  currentSection=target;
+}
+
+menuLinks.forEach(l=>l.addEventListener('click',e=>{
+  e.preventDefault();
+  const target=l.dataset.section;
+  if(target!==currentSection){ showSection(target); window.scrollTo(0,0);}
+}));
+
+window.addEventListener('scroll',()=>{ window.scrollY>30?navbar.classList.add('scrolled'):navbar.classList.remove('scrolled'); });
+
+const track=document.querySelector('.carousel-track'),
+      slides=Array.from(track.children),
+      nextButton=document.querySelector('.carousel-btn.next'),
+      prevButton=document.querySelector('.carousel-btn.prev');
+let currentIndex=0;
+
+function updateCarousel(){ track.style.transform=`translateX(-${slides[0].getBoundingClientRect().width*currentIndex}px)`; }
+nextButton.addEventListener('click',()=>{ currentIndex=(currentIndex+1)%slides.length; updateCarousel(); });
+prevButton.addEventListener('click',()=>{ currentIndex=(currentIndex-1+slides.length)%slides.length; updateCarousel(); });
+window.addEventListener('resize',updateCarousel);
+updateCarousel();
+</script>
+</body>
+</html>
